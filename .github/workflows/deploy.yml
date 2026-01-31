@@ -1,0 +1,24 @@
+name: Deploy eto-app
+
+on:
+  push:
+    branches: [ master ]  # или main, см. свою ветку
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Deploy to server via SSH
+      uses: appleboy/ssh-action@v1
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        key: ${{ secrets.SSH_KEY }}
+        script: |
+          cd /home/deploy/eto-app
+          git pull
+          sudo systemctl restart eto-app
